@@ -124,7 +124,9 @@ export const ProductDetailsScreen: React.FC = () => {
           </View>
 
           {/* Product Title */}
-          <Text style={styles.productTitle}>{cleanProductName(product.name)}</Text>
+          <Text style={styles.productTitle}>
+            {cleanProductName(product.name)}
+          </Text>
 
           {/* Price & Rating (End-to-End Separator) */}
           <View style={styles.priceRatingRow}>
@@ -161,27 +163,30 @@ export const ProductDetailsScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.swatchesRow}>
-                  {product.product_colors.map((color: ProductColor, index: number) => {
-                    const isSelected = selectedColor?.hex_value === color.hex_value;
-                    return (
-                      <TouchableOpacity
-                        key={`${color.hex_value}-${index}`}
-                        style={[
-                          styles.colorSwatchItem,
-                          isSelected && styles.colorSwatchItemActive,
-                        ]}
-                        onPress={() => handleSelectColor(color)}
-                        activeOpacity={0.8}
-                      >
-                        <View
+                  {product.product_colors.map(
+                    (color: ProductColor, index: number) => {
+                      const isSelected =
+                        selectedColor?.hex_value === color.hex_value;
+                      return (
+                        <TouchableOpacity
+                          key={`${color.hex_value}-${index}`}
                           style={[
-                            styles.colorSwatchCircle,
-                            { backgroundColor: color.hex_value },
+                            styles.colorSwatchItem,
+                            isSelected && styles.colorSwatchItemActive,
                           ]}
-                        />
-                      </TouchableOpacity>
-                    );
-                  })}
+                          onPress={() => handleSelectColor(color)}
+                          activeOpacity={0.8}
+                        >
+                          <View
+                            style={[
+                              styles.colorSwatchCircle,
+                              { backgroundColor: color.hex_value },
+                            ]}
+                          />
+                        </TouchableOpacity>
+                      );
+                    },
+                  )}
                 </View>
               </View>
               <View style={styles.endToEndDivider} />
@@ -215,7 +220,9 @@ export const ProductDetailsScreen: React.FC = () => {
               {cleanDescription.length > 180 && (
                 <TouchableOpacity
                   style={styles.readMoreBtn}
-                  onPress={() => setIsExpandedDescription(!isExpandedDescription)}
+                  onPress={() =>
+                    setIsExpandedDescription(!isExpandedDescription)
+                  }
                 >
                   <Text style={styles.readMoreText}>
                     {isExpandedDescription ? 'Read Less' : 'Read More'}
@@ -223,22 +230,6 @@ export const ProductDetailsScreen: React.FC = () => {
                 </TouchableOpacity>
               )}
             </View>
-          )}
-
-          {/* External Website / Store Link */}
-          {(product.product_link || product.website_link) && (
-            <TouchableOpacity
-              style={styles.externalLinkBtn}
-              onPress={handleOpenProductLink}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.externalLinkText}>
-                {product.website_link
-                  ? `Official Store (${product.website_link.replace('https://', '').replace('http://', '').replace('/', '')})`
-                  : 'Visit Official Brand Page'}
-              </Text>
-              <VectorIcon name="external-link" size={15} color={COLORS.textPrimary} />
-            </TouchableOpacity>
           )}
         </View>
       </ScrollView>

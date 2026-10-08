@@ -117,19 +117,24 @@ export const useBrandScreen = () => {
     }
 
     // Filter by Price Range (price_greater_than & price_less_than)
-    result = result.filter((p) => {
-      const priceNum = parseFloat(p.price || '0');
-      if (isNaN(priceNum) || priceNum <= 0) return true;
-      return priceNum >= priceMin && priceNum <= priceMax;
-    });
+    if (priceMin > 0 || priceMax < 100) {
+      result = result.filter((p) => {
+        if (!p.price) return false;
+        const priceNum = parseFloat(p.price);
+        if (isNaN(priceNum) || priceNum <= 0) return false;
+        return priceNum >= priceMin && priceNum <= priceMax;
+      });
+    }
 
     // Filter by Rating Range (rating_greater_than & rating_less_than)
-    result = result.filter((p) => {
-      const ratingNum = p.rating ?? 0;
-      // If product has no rating, include it when ratingMin is 0
-      if (ratingNum === 0 && ratingMin === 0) return true;
-      return ratingNum >= ratingMin && ratingNum <= ratingMax;
-    });
+    if (ratingMin > 0 || ratingMax < 5) {
+      result = result.filter((p) => {
+        if (p.rating === null || p.rating === undefined) return false;
+        const ratingNum = typeof p.rating === 'number' ? p.rating : parseFloat(p.rating as any);
+        if (isNaN(ratingNum)) return false;
+        return ratingNum >= ratingMin && ratingNum <= ratingMax;
+      });
+    }
 
     // Filter by search query (Bonus requirement)
     if (searchQuery.trim()) {
