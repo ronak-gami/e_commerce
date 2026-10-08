@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/types';
 
 interface UseSplashScreenOptions {
   duration?: number;
@@ -7,7 +10,13 @@ interface UseSplashScreenOptions {
 }
 
 export const useSplashScreen = (options?: UseSplashScreenOptions) => {
-  const { duration = 2800, onFinish } = options || {};
+  const { duration = 2600, onFinish } = options || {};
+  let navigation: NativeStackNavigationProp<RootStackParamList> | null = null;
+  try {
+    navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  } catch {
+    // Graceful fallback if rendered outside NavigationContainer
+  }
 
   const [isReady, setIsReady] = useState(false);
 
@@ -52,9 +61,9 @@ export const useSplashScreen = (options?: UseSplashScreenOptions) => {
     // 3. Progress bar animation
     Animated.timing(progressAnim, {
       toValue: 1,
-      duration: duration - 400,
+      duration: duration - 300,
       easing: Easing.inOut(Easing.quad),
-      useNativeDriver: false, // width interpolation requires false
+      useNativeDriver: false,
     }).start();
 
     // 4. Completion trigger
@@ -62,11 +71,13 @@ export const useSplashScreen = (options?: UseSplashScreenOptions) => {
       setIsReady(true);
       if (onFinish) {
         onFinish();
+      } else if (navigation && typeof navigation.replace === 'function') {
+        navigation.replace('Home');
       }
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration, fadeAnim, scaleAnim, translateYAnim, progressAnim, footerFadeAnim, onFinish]);
+  }, [duration, fadeAnim, scaleAnim, translateYAnim, progressAnim, footerFadeAnim, onFinish, navigation]);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],

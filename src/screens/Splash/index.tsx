@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Animated, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './style';
 import { useSplashScreen } from './useSplashScreen';
 
@@ -8,6 +9,7 @@ interface SplashScreenProps {
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+  const insets = useSafeAreaInsets();
   const {
     fadeAnim,
     scaleAnim,
@@ -54,7 +56,15 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       </Animated.View>
 
       {/* Footer loading and version info */}
-      <Animated.View style={[styles.footerContainer, { opacity: footerFadeAnim }]}>
+      <Animated.View
+        style={[
+          styles.footerContainer,
+          {
+            opacity: footerFadeAnim,
+            paddingBottom: Math.max(insets.bottom + 20, 40),
+          },
+        ]}
+      >
         <View style={styles.progressBarTrack}>
           <Animated.View
             style={[
